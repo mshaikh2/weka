@@ -7,7 +7,7 @@ public class hierClu {
 	public static void main(String[] args) throws Exception
 	{
 		BufferedReader breader = null;
-		breader = new BufferedReader(new FileReader("Training\\diabetes.arff"));
+		breader = new BufferedReader(new FileReader("TrainingData\\diabetes.arff"));
 		Instances train = new Instances(breader);
 		breader.close();
 		
