@@ -24,9 +24,11 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
@@ -35,6 +37,7 @@ import weka.core.Capabilities.Capability;
 import weka.core.DistanceFunction;
 import weka.core.Drawable;
 import weka.core.EuclideanDistance;
+import weka.core.ManhattanDistance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
@@ -91,7 +94,22 @@ import weka.core.Utils;
  * @version $Revision: 13174 $
  */
 public class HierarchicalClusterer extends AbstractClusterer implements
+
+
+
   OptionHandler, Drawable {
+	
+	 protected DistanceFunction m_DistanceFunction = null;
+	public HierarchicalClusterer(boolean ManhattanDistanceflag){
+		if(ManhattanDistanceflag){
+			m_DistanceFunction=new ManhattanDistance();
+			  
+		}
+		else{
+			m_DistanceFunction=new EuclideanDistance();
+		}
+	}
+	
   private static final long serialVersionUID = 1L;
 
   /**
@@ -115,7 +133,7 @@ public class HierarchicalClusterer extends AbstractClusterer implements
   }
 
   /** distance function used for comparing members of a cluster **/
-  protected DistanceFunction m_DistanceFunction = new EuclideanDistance();
+ //protected DistanceFunction m_DistanceFunction = new ManhattanDistance();
 
   public DistanceFunction getDistanceFunction() {
     return m_DistanceFunction;
@@ -312,7 +330,7 @@ public class HierarchicalClusterer extends AbstractClusterer implements
 
   @Override
   public void buildClusterer(Instances data) throws Exception {
-	  System.out.println("Building Clusters");
+	  //System.out.println("Building Clusters");
     //System.err.println("Method " + m_nLinkType);
     m_instances = data;
     int nInstances = m_instances.numInstances();
@@ -536,6 +554,7 @@ public class HierarchicalClusterer extends AbstractClusterer implements
         }
       }
     }
+    
     while (nClusters > m_nNumClusters) {
       int iMin1 = -1;
       int iMin2 = -1;
@@ -633,6 +652,14 @@ public class HierarchicalClusterer extends AbstractClusterer implements
   } // merge
 
   /** calculate distance the first time when setting up the distance matrix **/
+  public List<Integer> getDistanceFromZero(Instance zeroInstance){	  
+	  for(Instance i:m_instances){
+		  System.out.println(m_DistanceFunction.distance(i,zeroInstance));
+	  }  
+	  return null;
+  }
+  
+  
   double getDistance0(Vector<Integer> cluster1, Vector<Integer> cluster2) {
     double fBestDist = Double.MAX_VALUE;
     switch (m_nLinkType) {
@@ -651,7 +678,8 @@ public class HierarchicalClusterer extends AbstractClusterer implements
       fBestDist = m_DistanceFunction.distance(instance1, instance2);
       break;
     case WARD: {
-      // finds the distance of the change in caused by merging the cluster.
+
+    	// finds the distance of the change in caused by merging the cluster.
       // The information of a cluster is calculated as the error sum of squares
       // of the
       // centroids of the cluster and its members.
@@ -1170,7 +1198,7 @@ public class HierarchicalClusterer extends AbstractClusterer implements
   }
 
   public static void main(String[] argv) {
-    runClusterer(new HierarchicalClusterer(), argv);
+    runClusterer(new HierarchicalClusterer(true), argv);
   }
 
   @Override

@@ -58,7 +58,7 @@ public abstract class NormalizableDistance implements DistanceFunction,
   protected Instances m_Data = null;
 
   /** True if normalization is turned off (default false). */
-  protected boolean m_DontNormalize = false;
+  protected boolean m_DontNormalize = true;
 
   /** The range of the attributes. */
   protected double[][] m_Ranges;
